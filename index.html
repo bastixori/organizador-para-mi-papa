@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Diario del Richi - Mis Sueños y Grandes Aventuras</title>
-    <meta name="description" content="Un espacio personal para que Richi organice y registre sus sueños, planes, viajes y momentos especiales.">
+    <title>El Diario del Richi - Mis Metas y Logros</title>
+    <meta name="description" content="Una bitácora simple para que Richi anote sus metas y celebre sus logros.">
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,180 +24,98 @@
             <div class="logo-area">
                 <div class="icon-avatar">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                     </svg>
                 </div>
                 <div>
                     <h1>El Diario del Richi</h1>
-                    <p class="subtitle">Mi Bitácora de Sueños y Grandes Aventuras</p>
+                    <p class="subtitle">Mis Metas y Logros de Vida</p>
                 </div>
             </div>
-            <div class="header-actions">
-                <button id="btn-add-dream-header" class="btn btn-primary">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                    Nuevo Sueño
-                </button>
+            <!-- Simple Progress Stats -->
+            <div class="progress-simple">
+                <span id="progress-text">0 de 0 logrados</span>
+                <div class="mini-bar">
+                    <div class="mini-bar-fill" id="progress-bar-fill" style="width: 0%"></div>
+                </div>
             </div>
         </header>
 
-        <!-- DASHBOARD METRICS -->
-        <section class="dashboard-section" id="stats-dashboard">
-            <div class="dashboard-card main-stats">
-                <div class="stats-info">
-                    <h2>Progreso de Aventuras</h2>
-                    <p class="stats-description">Cada paso es un recuerdo que dura para siempre.</p>
-                </div>
-                <div class="progress-container-wrapper">
-                    <div class="progress-percentage-label" id="progress-percentage">0%</div>
-                    <div class="progress-bar-outer">
-                        <div class="progress-bar-inner" id="progress-bar-fill" style="width: 0%"></div>
+        <!-- ADD GOAL INPUT SECTION -->
+        <section class="add-goal-section">
+            <form id="quick-add-form" class="quick-add-form">
+                <div class="input-wrapper">
+                    <input type="text" id="goal-input" placeholder="Escribe aquí un sueño, viaje o meta..." required autocomplete="off">
+                    
+                    <!-- Color theme selector inside the input area for ease -->
+                    <div class="color-picker-simple">
+                        <label class="color-dot theme-purple" title="Púrpura">
+                            <input type="radio" name="goal-theme" value="theme-purple" checked>
+                            <span></span>
+                        </label>
+                        <label class="color-dot theme-blue" title="Azul">
+                            <input type="radio" name="goal-theme" value="theme-blue">
+                            <span></span>
+                        </label>
+                        <label class="color-dot theme-green" title="Verde">
+                            <input type="radio" name="goal-theme" value="theme-green">
+                            <span></span>
+                        </label>
+                        <label class="color-dot theme-rose" title="Rosa">
+                            <input type="radio" name="goal-theme" value="theme-rose">
+                            <span></span>
+                        </label>
+                        <label class="color-dot theme-amber" title="Ámbar">
+                            <input type="radio" name="goal-theme" value="theme-amber">
+                            <span></span>
+                        </label>
                     </div>
                 </div>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <span class="stat-number" id="stat-total">0</span>
-                    <span class="stat-label">Total de Sueños</span>
-                </div>
-                <div class="stat-box completed">
-                    <span class="stat-number" id="stat-completed">0</span>
-                    <span class="stat-label">Cumplidos 🌟</span>
-                </div>
-                <div class="stat-box pending">
-                    <span class="stat-number" id="stat-pending">0</span>
-                    <span class="stat-label">Por Vivir ✈️</span>
-                </div>
-            </div>
+                <button type="submit" class="btn btn-primary btn-add">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Añadir Meta
+                </button>
+            </form>
         </section>
 
-        <!-- CONTROLS & FILTER BAR -->
-        <section class="filters-section">
-            <div class="search-bar">
-                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" id="search-input" placeholder="Buscar aventuras, viajes o deseos...">
-            </div>
-            <div class="filter-groups">
-                <div class="filter-tabs" id="status-filters">
-                    <button class="filter-tab active" data-status="all">Todos</button>
-                    <button class="filter-tab" data-status="pending">Por Vivir</button>
-                    <button class="filter-tab" data-status="completed">Cumplidos</button>
+        <!-- KANBAN BOARD -->
+        <main class="kanban-board">
+            <!-- COLUMN 1: TO DO (METAS) -->
+            <div class="kanban-column" id="col-todo">
+                <div class="column-header">
+                    <div class="column-title-wrapper">
+                        <span class="column-emoji">✈️</span>
+                        <h2>Mis Metas</h2>
+                    </div>
+                    <span class="column-badge" id="badge-todo">0</span>
                 </div>
-                <div class="category-filters" id="category-filters">
-                    <button class="category-btn active" data-category="all">Todos</button>
-                    <button class="category-btn" data-category="viaje">✈️ Viajes</button>
-                    <button class="category-btn" data-category="familia">👥 Familia</button>
-                    <button class="category-btn" data-category="crear">💡 Aprender/Crear</button>
-                    <button class="category-btn" data-category="deseo">🌟 Deseos</button>
+                <div class="cards-list" id="todo-list">
+                    <!-- Dynamic metas cards here -->
                 </div>
             </div>
-        </section>
 
-        <!-- DREAM BOARD (CARDS GRID) -->
-        <main class="dreams-board" id="dreams-board">
-            <!-- Dynamic Content goes here -->
-            <div class="empty-state" id="empty-state">
-                <div class="empty-icon">✨</div>
-                <h3>El diario está en blanco</h3>
-                <p>Comienza a escribir los sueños y planes que quieres realizar. ¡El viaje empieza hoy!</p>
-                <button id="btn-add-dream-empty" class="btn btn-primary">Crear mi primer sueño</button>
+            <!-- COLUMN 2: DONE (LOGROS) -->
+            <div class="kanban-column" id="col-done">
+                <div class="column-header">
+                    <div class="column-title-wrapper">
+                        <span class="column-emoji">🌟</span>
+                        <h2>Mis Logros</h2>
+                    </div>
+                    <span class="column-badge" id="badge-done">0</span>
+                </div>
+                <div class="cards-list" id="done-list">
+                    <!-- Dynamic logros cards here -->
+                </div>
             </div>
         </main>
 
         <!-- FOOTER -->
         <footer class="main-footer">
-            <p>Hecho con ❤️ para Richi. Cada gran aventura comienza con un simple sueño.</p>
+            <p>Hecho con ❤️ para Richi. Escribe tus metas, disfrútalas y celébralas.</p>
         </footer>
-    </div>
-
-    <!-- MODAL: ADD / EDIT DREAM -->
-    <div class="modal-overlay" id="dream-modal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 id="modal-title">Agregar Nuevo Sueño</h3>
-                <button class="btn-close" id="btn-close-modal">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            <form id="dream-form">
-                <input type="hidden" id="dream-id">
-                
-                <div class="form-group">
-                    <label for="dream-title">¿Qué te gustaría hacer? *</label>
-                    <input type="text" id="dream-title" required placeholder="Ej. Viajar a la Patagonia con la familia, Aprender a tocar piano..." autocomplete="off">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="dream-category">Categoría</label>
-                        <select id="dream-category">
-                            <option value="viaje">✈️ Viajes & Aventuras</option>
-                            <option value="familia">👥 Familia & Amigos</option>
-                            <option value="crear">💡 Aprender & Crear</option>
-                            <option value="deseo">🌟 Sueños & Deseos</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="dream-priority">Prioridad / Ilusión</label>
-                        <select id="dream-priority">
-                            <option value="alta">🔥 ¡Esencial!</option>
-                            <option value="media">⭐ Muy importante</option>
-                            <option value="baja">⏳ Con calma</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="dream-date">Fecha estimada / Época ideal (Opcional)</label>
-                    <input type="text" id="dream-date" placeholder="Ej. Próximo verano, Octubre 2026, Sin prisa...">
-                </div>
-
-                <div class="form-group">
-                    <label for="dream-notes">Notas / Detalles / ¿Cómo lo lograremos?</label>
-                    <textarea id="dream-notes" rows="3" placeholder="Detalles de este sueño: con quién ir, qué llevar, por qué es especial..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Elige una estética / color para la tarjeta</label>
-                    <div class="theme-selector">
-                        <label class="theme-option" style="background: linear-gradient(135deg, #c084fc, #6366f1);">
-                            <input type="radio" name="dream-theme" value="theme-purple" checked>
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="theme-option" style="background: linear-gradient(135deg, #38bdf8, #0369a1);">
-                            <input type="radio" name="dream-theme" value="theme-blue">
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="theme-option" style="background: linear-gradient(135deg, #34d399, #047857);">
-                            <input type="radio" name="dream-theme" value="theme-green">
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="theme-option" style="background: linear-gradient(135deg, #fb7185, #be123c);">
-                            <input type="radio" name="dream-theme" value="theme-rose">
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="theme-option" style="background: linear-gradient(135deg, #fbbf24, #b45309);">
-                            <input type="radio" name="dream-theme" value="theme-amber">
-                            <span class="checkmark"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="btn-submit-dream">Guardar Sueño</button>
-                </div>
-            </form>
-        </div>
     </div>
 
     <script src="app.js"></script>
