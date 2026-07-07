@@ -411,8 +411,7 @@ body {
 }
 
 .kanban-card.is-completed .card-text {
-    color: var(--text-muted);
-    text-decoration: line-through;
+    color: var(--text-secondary);
 }
 
 .kanban-card.is-completed .btn-move:hover {
