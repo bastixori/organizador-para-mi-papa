@@ -6,60 +6,21 @@ const DEFAULT_GOALS = [
     {
         id: "goal-1",
         key: "RICH-1",
-        title: "Viajar a la Patagonia chilena en familia",
+        title: "Querer a la familia",
         theme: "theme-purple",
         priority: "alta",
-        status: "todo",
-        completedDate: null,
-        checklist: [
-            { id: "sub-1-1", text: "Buscar opciones de cabañas", done: false },
-            { id: "sub-1-2", text: "Revisar vuelos y transporte", done: false }
-        ]
+        status: "done",
+        completedDate: "2026-07-06",
+        checklist: []
     },
     {
         id: "goal-2",
         key: "RICH-2",
-        title: "Hacer un gran asado de campo para mis amigos",
-        theme: "theme-amber",
-        priority: "media",
-        status: "progress",
-        completedDate: null,
-        checklist: [
-            { id: "sub-2-1", text: "Elegir la fecha ideal", done: true },
-            { id: "sub-2-2", text: "Comprar leña de aromo", done: false },
-            { id: "sub-2-3", text: "Comprar la carne y acompañamientos", done: false }
-        ]
-    },
-    {
-        id: "goal-3",
-        key: "RICH-3",
-        title: "Visitar a mis primos en el sur y recordar viejos lugares",
-        theme: "theme-blue",
+        title: "Divorciarse",
+        theme: "theme-rose",
         priority: "alta",
         status: "done",
-        completedDate: "2026-07-01",
-        checklist: []
-    },
-    {
-        id: "goal-4",
-        key: "RICH-4",
-        title: "Aprender a tocar en guitarra una canción de los Beatles",
-        theme: "theme-green",
-        priority: "baja",
-        status: "todo",
-        completedDate: null,
-        checklist: [
-            { id: "sub-4-1", text: "Aprender los acordes principales (C, G, Am, F)", done: true }
-        ]
-    },
-    {
-        id: "goal-5",
-        key: "RICH-5",
-        title: "Ir a ver un partido de la Selección en el estadio",
-        theme: "theme-rose",
-        priority: "media",
-        status: "progress",
-        completedDate: null,
+        completedDate: "2026-07-06",
         checklist: []
     }
 ];
@@ -80,8 +41,18 @@ let editingId = null; // Track which card is in inline edit mode
 // Initialize App
 function initApp() {
     const savedGoals = localStorage.getItem("richi_jira_goals");
+    let parsedGoals = null;
     if (savedGoals) {
-        goals = JSON.parse(savedGoals);
+        try {
+            parsedGoals = JSON.parse(savedGoals);
+        } catch (e) {}
+    }
+    
+    // Check if the old seeds are present, indicating a need to reset
+    const hasOldSeeds = parsedGoals && parsedGoals.some(g => g.title === "Viajar a la Patagonia chilena en familia");
+    
+    if (parsedGoals && !hasOldSeeds) {
+        goals = parsedGoals;
     } else {
         goals = [...DEFAULT_GOALS];
         saveGoals();
