@@ -178,6 +178,62 @@ body {
     transform: scale(1.08);
 }
 
+.share-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-card);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: var(--radius-lg);
+    backdrop-filter: var(--glass-blur);
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.share-label {
+    font-size: 0.85rem;
+    color: var(--emerald-light);
+    font-weight: 600;
+}
+
+.share-input-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-grow: 1;
+    max-width: 450px;
+    width: 100%;
+}
+
+.share-input-group input {
+    flex-grow: 1;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+    border-radius: var(--radius-sm);
+    outline: none;
+}
+
+.btn-copy {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: var(--emerald-light);
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-copy:hover {
+    background: var(--emerald-primary);
+    color: #fff;
+    border-color: transparent;
+}
+
 /* ==========================================================================
    ADD GOAL INPUT
    ========================================================================== */

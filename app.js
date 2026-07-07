@@ -1,5 +1,5 @@
 // ==========================================================================
-// CONFIGURATION & SEED DATA (SIMPLE KANBAN EMERALD)
+// CONFIGURATION & SEED DATA (CLOUD-SYNC KANBAN EMERALD)
 // ==========================================================================
 
 const DEFAULT_GOALS = [
@@ -13,39 +13,192 @@ const SVG_ICONS = {
     trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`
 };
 
+const API_BASE = "https://jsonbin-zeta.vercel.app/api/bins";
+
 // ==========================================================================
 // STATE MANAGEMENT
 // ==========================================================================
 
 let goals = [];
+let binId = null;
+let syncIntervalId = null;
 
 // Initialize App
-function initApp() {
-    const savedGoals = localStorage.getItem("richi_simple_kanban_goals");
-    if (savedGoals) {
-        goals = JSON.parse(savedGoals);
+async function initApp() {
+    setupEventListeners();
+    
+    // Parse URL query parameter "?id=..."
+    const urlParams = new URLSearchParams(window.location.search);
+    const idParam = urlParams.get("id");
+    
+    if (idParam) {
+        binId = idParam;
+        localStorage.setItem("richi_cloud_bin_id", binId);
+        
+        // Show share banner with link
+        setupShareLink();
+        
+        // Load data from Cloud Database
+        await loadCloudData();
+        
+        // Start auto-sync interval (every 10 seconds to detect changes from other devices)
+        startAutoSync();
     } else {
-        goals = [...DEFAULT_GOALS];
-        saveGoals();
+        // No ID in URL. Check if we have a saved ID in localStorage
+        const savedBinId = localStorage.getItem("richi_cloud_bin_id");
+        if (savedBinId) {
+            // Redirect to URL with ID to enable sharing
+            window.location.search = `?id=${savedBinId}`;
+        } else {
+            // No saved ID. Create a new cloud bin database on the fly!
+            await createCloudDatabase();
+        }
     }
     
-    setupEventListeners();
-    renderStats();
-    renderBoard();
     setupMusic();
+}
 
-    // Register PWA Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service Worker registrado:', reg.scope))
-                .catch(err => console.log('Error al registrar Service Worker:', err));
+// Create new cloud bin database
+async function createCloudDatabase() {
+    const progressCounter = document.getElementById("progress-counter");
+    progressCounter.textContent = "Creando base de datos...";
+    
+    try {
+        const response = await fetch(API_BASE, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ goals: DEFAULT_GOALS })
         });
+        
+        if (!response.ok) throw new Error("Error creating bin");
+        
+        const result = await response.json();
+        binId = result.id;
+        
+        localStorage.setItem("richi_cloud_bin_id", binId);
+        
+        // Redirect to URL with ID
+        window.location.search = `?id=${binId}`;
+    } catch (err) {
+        console.error("Failed to initialize cloud database:", err);
+        progressCounter.textContent = "Error al conectar con la nube";
+        // Fallback to local storage
+        goals = [...DEFAULT_GOALS];
+        renderStats();
+        renderBoard();
     }
 }
 
-function saveGoals() {
-    localStorage.setItem("richi_simple_kanban_goals", JSON.stringify(goals));
+// Load goals from Cloud Database
+async function loadCloudData() {
+    const progressCounter = document.getElementById("progress-counter");
+    const originalText = progressCounter.textContent;
+    progressCounter.textContent = "Cargando...";
+    
+    try {
+        const response = await fetch(`${API_BASE}/${binId}`);
+        if (!response.ok) throw new Error("Error loading data");
+        
+        const result = await response.json();
+        
+        // npoint/jsonbin compatibility: make sure we load goals correctly
+        goals = result.goals || [];
+        
+        renderStats();
+        renderBoard();
+    } catch (err) {
+        console.error("Failed to load cloud data:", err);
+        progressCounter.textContent = "Error de conexión 📶";
+        // Load fallback from local backup if available
+        const backup = localStorage.getItem("richi_local_backup");
+        if (backup) {
+            goals = JSON.parse(backup);
+            renderStats();
+            renderBoard();
+        }
+    }
+}
+
+// Save goals to Cloud Database (called on every action)
+async function saveGoals() {
+    // Save local backup first
+    localStorage.setItem("richi_local_backup", JSON.stringify(goals));
+    
+    if (!binId) return;
+    
+    try {
+        await fetch(`${API_BASE}/${binId}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ goals: goals })
+        });
+    } catch (err) {
+        console.error("Failed to save goals to cloud:", err);
+    }
+}
+
+// Auto-sync loop: checks if database changed in background
+function startAutoSync() {
+    if (syncIntervalId) clearInterval(syncIntervalId);
+    
+    syncIntervalId = setInterval(async () => {
+        if (!binId) return;
+        
+        try {
+            const response = await fetch(`${API_BASE}/${binId}`);
+            if (!response.ok) return;
+            
+            const result = await response.json();
+            const cloudGoals = result.goals || [];
+            
+            // Compare stringified versions. If different, update & re-render.
+            // This prevents flickering and only updates when actual changes occur!
+            if (JSON.stringify(cloudGoals) !== JSON.stringify(goals)) {
+                console.log("Cambios detectados en la nube. Sincronizando...");
+                goals = cloudGoals;
+                renderStats();
+                renderBoard();
+            }
+        } catch (e) {
+            // Silently ignore sync connection errors
+        }
+    }, 10000); // Sync every 10 seconds
+}
+
+// Setup the share link banner
+function setupShareLink() {
+    const shareBanner = document.getElementById("share-banner");
+    const shareUrlInput = document.getElementById("share-url");
+    const btnCopy = document.getElementById("btn-copy");
+    
+    if (!shareBanner || !shareUrlInput || !btnCopy) return;
+    
+    const currentUrl = window.location.href;
+    shareUrlInput.value = currentUrl;
+    shareBanner.style.display = "flex";
+    
+    btnCopy.addEventListener("click", () => {
+        shareUrlInput.select();
+        shareUrlInput.setSelectionRange(0, 99999); // Mobile compatibility
+        
+        navigator.clipboard.writeText(currentUrl).then(() => {
+            btnCopy.textContent = "¡Copiado!";
+            btnCopy.style.background = "#059669";
+            btnCopy.style.color = "#fff";
+            
+            setTimeout(() => {
+                btnCopy.textContent = "Copiar";
+                btnCopy.style.background = "";
+                btnCopy.style.color = "";
+            }, 2000);
+        }).catch(err => {
+            console.error("Error al copiar enlace:", err);
+        });
+    });
 }
 
 // ==========================================================================
@@ -54,7 +207,7 @@ function saveGoals() {
 
 function setupEventListeners() {
     // Add goal form submission
-    document.getElementById("add-form").addEventListener("submit", (e) => {
+    document.getElementById("add-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         
         const input = document.getElementById("goal-input");
@@ -68,12 +221,15 @@ function setupEventListeners() {
         };
         
         goals.unshift(newGoal);
-        saveGoals();
+        
+        // Optimistic UI update
+        renderStats();
+        renderBoard();
         
         input.value = "";
         
-        renderStats();
-        renderBoard();
+        // Save to cloud in background
+        await saveGoals();
     });
 }
 
@@ -81,14 +237,14 @@ function setupEventListeners() {
 // OPERATIONS
 // ==========================================================================
 
-function toggleComplete(id, event) {
+async function toggleComplete(id, event) {
     const index = goals.findIndex(g => g.id === id);
     if (index === -1) return;
     
     const isNowCompleted = !goals[index].completed;
     goals[index].completed = isNowCompleted;
     
-    saveGoals();
+    // Optimistic UI update
     renderStats();
     renderBoard();
     
@@ -101,14 +257,21 @@ function toggleComplete(id, event) {
             triggerConfetti();
         }
     }
+    
+    // Save to cloud
+    await saveGoals();
 }
 
-function deleteGoal(id) {
+async function deleteGoal(id) {
     if (confirm("¿Estás seguro de querer borrar esta meta de tu tablero?")) {
         goals = goals.filter(g => g.id !== id);
-        saveGoals();
+        
+        // Optimistic UI update
         renderStats();
         renderBoard();
+        
+        // Save to cloud
+        await saveGoals();
     }
 }
 
@@ -317,7 +480,10 @@ function loop() {
     }
 }
 
-// Background Music Control
+// ==========================================================================
+// BACKGROUND MUSIC CONTROL
+// ==========================================================================
+
 function setupMusic() {
     const music = document.getElementById("bg-music");
     const btn = document.getElementById("btn-music");
