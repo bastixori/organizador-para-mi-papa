@@ -1,11 +1,11 @@
 /* ==========================================================================
-   CSS DESIGN SYSTEM - EL TABLERO DE RICHI (CASUAL JIRA STYLE)
+   CSS DESIGN SYSTEM - EL DIARIO DEL RICHI (ULTRA-SIMPLE EMERALD CHECKLIST)
    ========================================================================== */
 
 :root {
     --bg-dark: #090a0f;
     --bg-card: rgba(22, 25, 37, 0.6);
-    --bg-card-hover: rgba(30, 34, 50, 0.85);
+    --bg-card-hover: rgba(30, 34, 50, 0.8);
     --border-color: rgba(255, 255, 255, 0.08);
     
     /* Text Colors */
@@ -13,26 +13,16 @@
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
     
-    /* Brand Gradients & Colors */
-    --primary-grad: linear-gradient(135deg, #10b981, #059669);
-    --primary-glow: rgba(16, 185, 129, 0.3);
+    /* Emerald Theme Colors */
+    --emerald-primary: #10b981;
+    --emerald-dark: #059669;
+    --emerald-light: #34d399;
+    --emerald-glow: rgba(16, 185, 129, 0.25);
     
-    --success-grad: linear-gradient(135deg, #10b981, #14b8a6);
-    --success-glow: rgba(16, 185, 129, 0.3);
-
-    --warning-grad: linear-gradient(135deg, #fbbf24, #d97706);
-    
-    /* Card Aesthetic Themes */
-    --theme-purple: #a855f7;
-    --theme-blue: #38bdf8;
-    --theme-green: #34d399;
-    --theme-rose: #fb7185;
-    --theme-amber: #fbbf24;
-
     /* UI Tokens */
-    --radius-sm: 6px;
-    --radius-md: 10px;
-    --radius-lg: 16px;
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
     --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --shadow-main: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     --glass-blur: blur(12px);
@@ -56,24 +46,11 @@ body {
     overflow-x: hidden;
     position: relative;
     background-image: 
-        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 35%),
-        radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.05) 0px, transparent 35%);
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.04) 0px, transparent 40%),
+        radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.04) 0px, transparent 40%);
     background-attachment: fixed;
-}
-
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: var(--bg-dark);
-}
-::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.06);
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.12);
+    display: flex;
+    justify-content: center;
 }
 
 #confetti-canvas {
@@ -86,13 +63,14 @@ body {
     z-index: 9999;
 }
 
+/* App Wrapper: Centered mobile-app-like column */
 .app-container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 1.5rem 1rem;
+    width: 100%;
+    max-width: 600px;
+    padding: 2rem 1rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
 /* ==========================================================================
@@ -103,7 +81,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
+    padding: 1.25rem;
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
@@ -118,587 +96,273 @@ body {
 }
 
 .icon-avatar {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: var(--radius-md);
-    background: var(--primary-grad);
+    background: linear-gradient(135deg, var(--emerald-primary), var(--emerald-dark));
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 15px var(--primary-glow);
+    box-shadow: 0 0 15px var(--emerald-glow);
     color: #fff;
     flex-shrink: 0;
 }
 
 .icon-avatar svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
 }
 
 .logo-area h1 {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     font-weight: 800;
     letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #ffffff 40%, #34d399 100%);
+    background: linear-gradient(135deg, #ffffff 40%, var(--emerald-light) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .logo-area .subtitle {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
 }
 
-.progress-simple {
-    text-align: right;
-    min-width: 160px;
-}
-
-#progress-text {
+.counter-badge {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: var(--emerald-light);
+    padding: 0.35rem 0.75rem;
     font-size: 0.8rem;
     font-weight: 700;
-    color: #10b981;
-    display: block;
-    margin-bottom: 0.35rem;
-}
-
-.mini-bar {
-    width: 100%;
-    height: 5px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.mini-bar-fill {
-    height: 100%;
-    background: var(--success-grad);
-    box-shadow: 0 0 8px var(--success-glow);
-    width: 0%;
-    transition: width 0.6s ease;
+    border-radius: 20px;
+    white-space: nowrap;
 }
 
 /* ==========================================================================
-   QUICK INPUT SECTION
+   ADD GOAL INPUT
    ========================================================================== */
 
-.add-goal-section {
+.add-section {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 0.75rem 1rem;
+    padding: 0.75rem;
     backdrop-filter: var(--glass-blur);
 }
 
-.quick-add-form {
+.add-form {
     display: flex;
-    gap: 0.75rem;
-    align-items: center;
+    gap: 0.5rem;
 }
 
-.input-wrapper {
+.add-form input {
     flex-grow: 1;
-    position: relative;
-    display: flex;
-    align-items: center;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    padding-right: 0.75rem;
-    gap: 0.75rem;
-    transition: var(--transition-smooth);
-}
-
-.input-wrapper:focus-within {
-    border-color: rgba(139, 92, 246, 0.4);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.input-wrapper input {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    background: transparent;
-    border: none;
     color: var(--text-primary);
+    padding: 0.75rem 1rem;
     font-size: 0.95rem;
     outline: none;
+    transition: var(--transition-smooth);
 }
 
-.input-wrapper input::placeholder {
+.add-form input:focus {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.1);
+}
+
+.add-form input::placeholder {
     color: var(--text-muted);
 }
-
-/* Priority select in input */
-.priority-dropdown {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: var(--text-primary);
-    padding: 0.4rem 0.6rem;
-    border-radius: var(--radius-sm);
-    outline: none;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-}
-
-.priority-dropdown:focus {
-    border-color: rgba(139, 92, 246, 0.4);
-}
-
-/* Color dot picker */
-.color-picker-simple {
-    display: flex;
-    gap: 0.35rem;
-}
-
-.color-dot {
-    display: block;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    cursor: pointer;
-    position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.color-dot input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.color-dot span {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: transparent;
-    transition: var(--transition-smooth);
-}
-
-.color-dot input:checked + span {
-    background: #fff;
-    width: 8px;
-    height: 8px;
-}
-
-.color-dot.theme-purple { background-color: var(--theme-purple); }
-.color-dot.theme-blue { background-color: var(--theme-blue); }
-.color-dot.theme-green { background-color: var(--theme-green); }
-.color-dot.theme-rose { background-color: var(--theme-rose); }
-.color-dot.theme-amber { background-color: var(--theme-amber); }
 
 /* Buttons */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.35rem;
+    gap: 0.3rem;
     padding: 0.75rem 1.25rem;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: var(--radius-md);
     border: none;
     cursor: pointer;
     transition: var(--transition-smooth);
     outline: none;
-    white-space: nowrap;
 }
 
-.btn-primary {
-    background: var(--primary-grad);
+.btn-add {
+    background: linear-gradient(135deg, var(--emerald-primary), var(--emerald-dark));
     color: #fff;
-    box-shadow: 0 4px 12px var(--primary-glow);
+    box-shadow: 0 4px 12px var(--emerald-glow);
 }
 
-.btn-primary:hover {
+.btn-add:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.35);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }
 
 .btn-add svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
 }
 
 /* ==========================================================================
-   KANBAN BOARD LAYOUT
+   GOALS LIST CONTAINER
    ========================================================================== */
 
-.kanban-board {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-    align-items: start;
-}
-
-.kanban-column {
-    background: rgba(13, 15, 23, 0.4);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    padding: 1rem;
-    backdrop-filter: var(--glass-blur);
+.goals-list-container {
+    min-height: 300px;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
-    min-height: 500px;
 }
 
-/* Special color accents for columns */
-#col-todo { background: rgba(56, 189, 248, 0.02); }
-#col-progress { background: rgba(251, 191, 36, 0.02); }
-#col-done { background: rgba(16, 185, 129, 0.02); }
-
-.column-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    padding-bottom: 0.6rem;
-}
-
-.column-title-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.column-emoji {
-    font-size: 1.15rem;
-}
-
-.column-header h2 {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    letter-spacing: -0.2px;
-}
-
-.column-badge {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    color: var(--text-secondary);
-    padding: 0.15rem 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    border-radius: 10px;
-}
-
-.cards-list {
+.goals-list {
     display: flex;
     flex-direction: column;
     gap: 0.65rem;
-    flex-grow: 1;
-    overflow-y: auto;
-    max-height: 65vh;
-    padding-right: 2px;
 }
 
-/* Empty placeholder */
-.column-empty {
+/* Empty State */
+.empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
+    padding: 4rem 1.5rem;
+    background: var(--bg-card);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-lg);
     color: var(--text-muted);
-    padding: 2.5rem 1rem;
-    border: 2px dashed rgba(255, 255, 255, 0.02);
-    border-radius: var(--radius-md);
-    height: 100%;
 }
 
-.column-empty-icon {
-    font-size: 1.8rem;
-    margin-bottom: 0.5rem;
-    opacity: 0.4;
+.empty-emoji {
+    font-size: 2.2rem;
+    margin-bottom: 0.75rem;
+    opacity: 0.5;
 }
 
-.column-empty-text {
-    font-size: 0.8rem;
+.empty-state p {
+    font-size: 0.85rem;
+    max-width: 250px;
     line-height: 1.4;
 }
 
 /* ==========================================================================
-   JIRA-STYLE TICKET CARDS (CASUAL)
+   CHECKLIST ITEM CARD
    ========================================================================== */
 
-.kanban-card {
-    background: rgba(18, 20, 30, 0.9);
+.goal-card {
+    background: rgba(18, 20, 30, 0.85);
     border: 1px solid var(--border-color);
-    border-top: 3px solid var(--theme-purple); /* thematic color coding on top */
     border-radius: var(--radius-md);
-    padding: 0.85rem;
+    padding: 0.85rem 1rem;
     display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     transition: var(--transition-smooth);
-    box-shadow: 0 4px 12px -5px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-.kanban-card:hover {
-    transform: translateY(-2px);
-    border-color: rgba(255, 255, 255, 0.12);
-    background: rgba(24, 26, 38, 0.95);
-    box-shadow: 0 6px 16px -5px rgba(0,0,0,0.5);
+.goal-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(16, 185, 129, 0.15);
+    background: rgba(22, 25, 37, 0.9);
 }
 
-/* Theme borders */
-.kanban-card.theme-purple { border-top-color: var(--theme-purple); }
-.kanban-card.theme-blue { border-top-color: var(--theme-blue); }
-.kanban-card.theme-green { border-top-color: var(--theme-green); }
-.kanban-card.theme-rose { border-top-color: var(--theme-rose); }
-.kanban-card.theme-amber { border-top-color: var(--theme-amber); }
-
-/* Card Ticket Header */
-.card-ticket-header {
+.card-left-section {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-}
-
-.ticket-key {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-}
-
-.ticket-priority {
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.ticket-priority.priority-alta { color: #fb7185; background: rgba(251, 113, 133, 0.08); }
-.ticket-priority.priority-media { color: #fbbf24; background: rgba(251, 191, 36, 0.08); }
-.ticket-priority.priority-baja { color: #38bdf8; background: rgba(56, 189, 248, 0.08); }
-
-/* Card Title text */
-.card-title-text {
-    font-size: 0.9rem;
-    font-weight: 600;
-    line-height: 1.4;
-    color: var(--text-primary);
-    word-break: break-word;
-}
-
-/* Sub-Tasks Checklist Section */
-.card-checklist-container {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.02);
-    border-radius: var(--radius-sm);
-    padding: 0.45rem 0.6rem;
-    margin-top: 0.25rem;
-}
-
-.checklist-title-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.35rem;
-}
-
-.checklist-title {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--text-secondary);
-}
-
-.checklist-progress-text {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-}
-
-.checklist-items-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    list-style: none;
-}
-
-.checklist-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.4rem;
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    line-height: 1.3;
-}
-
-.checklist-item input[type="checkbox"] {
-    margin-top: 0.15rem;
-    cursor: pointer;
-}
-
-.checklist-item.is-done {
-    color: var(--text-muted);
-    text-decoration: line-through;
-}
-
-/* Quick subtask add input in card */
-.add-subtask-form {
-    display: flex;
-    margin-top: 0.4rem;
-    gap: 0.25rem;
-}
-
-.add-subtask-input {
+    gap: 0.85rem;
     flex-grow: 1;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 4px;
-    color: #fff;
-    padding: 0.2rem 0.4rem;
-    font-size: 0.75rem;
-    outline: none;
 }
 
-.btn-subtask-add {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: var(--text-primary);
-    padding: 0.2rem 0.4rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: bold;
+/* CUSTOM CHECKBOX BUTTON */
+.checkbox-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
     cursor: pointer;
-}
-
-/* Inline Edit Card Form */
-.inline-edit-form {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
-}
-
-.inline-edit-input {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(139, 92, 246, 0.4);
-    border-radius: var(--radius-sm);
-    color: #fff;
-    padding: 0.45rem 0.6rem;
-    font-size: 0.85rem;
-    outline: none;
-}
-
-.inline-edit-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.4rem;
-}
-
-.btn-inline-save {
-    background: var(--success-grad);
-    border: none;
-    color: #fff;
-    padding: 0.35rem 0.75rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.btn-inline-cancel {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    padding: 0.35rem 0.6rem;
-    border-radius: var(--radius-sm);
-    font-size: 0.75rem;
-    cursor: pointer;
-}
-
-/* Card Actions / Footer */
-.card-actions {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.03);
-    padding-top: 0.5rem;
-    margin-top: 0.25rem;
+    justify-content: center;
+    color: transparent;
+    transition: var(--transition-smooth);
+    flex-shrink: 0;
 }
 
-.card-actions-left {
-    display: flex;
-    gap: 0.2rem;
+.checkbox-btn:hover {
+    border-color: var(--emerald-primary);
+    background: rgba(16, 185, 129, 0.08);
 }
 
-.btn-card-icon {
+.checkbox-btn svg {
+    width: 14px;
+    height: 14px;
+    stroke-width: 3px;
+    transition: var(--transition-smooth);
+}
+
+/* Goal text styling */
+.goal-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.4;
+    word-break: break-word;
+    cursor: pointer;
+    user-select: none;
+    transition: var(--transition-smooth);
+}
+
+/* Trash Icon Button */
+.btn-delete {
     background: transparent;
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    padding: 0.3rem;
-    border-radius: 4px;
+    padding: 0.4rem;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: var(--transition-smooth);
+    flex-shrink: 0;
 }
 
-.btn-card-icon:hover {
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--text-secondary);
-}
-
-.btn-card-icon.delete:hover {
+.btn-delete:hover {
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
 }
 
-.btn-card-icon svg {
-    width: 13px;
-    height: 13px;
+.btn-delete svg {
+    width: 15px;
+    height: 15px;
 }
 
-/* Casual Workflow Status Dropdown inside Ticket */
-.btn-status-dropdown {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    color: var(--text-secondary);
-    padding: 0.25rem 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 4px;
-    outline: none;
-    cursor: pointer;
-    transition: var(--transition-smooth);
+/* Completed item styling */
+.goal-card.is-completed {
+    border-color: rgba(16, 185, 129, 0.1);
+    background: rgba(9, 11, 18, 0.65);
+    opacity: 0.75;
 }
 
-.btn-status-dropdown:hover {
-    background: rgba(255, 255, 255, 0.07);
-    color: var(--text-primary);
-    border-color: rgba(255, 255, 255, 0.1);
+.goal-card.is-completed .checkbox-btn {
+    background: var(--emerald-primary);
+    border-color: var(--emerald-primary);
+    color: #fff;
+    box-shadow: 0 0 8px var(--emerald-glow);
 }
 
-/* Done/Logrado Column Card Specifics */
-.kanban-card.is-completed {
-    border-top-color: #10b981;
-    background: rgba(9, 11, 18, 0.75);
-    opacity: 0.85;
-}
-
-.kanban-card.is-completed .card-title-text {
+.goal-card.is-completed .goal-text {
     color: var(--text-muted);
     text-decoration: line-through;
-}
-
-.kanban-card.is-completed .btn-status-dropdown {
-    color: #10b981;
-    border-color: rgba(16, 185, 129, 0.15);
-    background: rgba(16, 185, 129, 0.04);
 }
 
 /* ==========================================================================
@@ -707,7 +371,7 @@ body {
 
 .main-footer {
     text-align: center;
-    padding: 1.5rem 0;
+    padding: 1rem 0;
     color: var(--text-muted);
     font-size: 0.8rem;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -717,67 +381,16 @@ body {
    RESPONSIVE DESIGN
    ========================================================================== */
 
-@media (max-width: 900px) {
-    .kanban-board {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .kanban-column {
-        min-height: auto;
-    }
-}
-
-@media (max-width: 600px) {
+@media (max-width: 480px) {
     .app-container {
-        padding: 0.75rem 0.25rem;
+        padding: 1rem 0.5rem;
     }
-
+    
     .main-header {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.85rem;
-        text-align: center;
-    }
-
-    .logo-area {
-        flex-direction: column;
-        gap: 0.35rem;
-    }
-
-    .progress-simple {
-        text-align: center;
-        width: 100%;
-    }
-
-    .quick-add-form {
-        flex-direction: column;
-        align-items: stretch;
+        padding: 1rem;
     }
     
-    .input-wrapper {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 0.5rem;
-        gap: 0.5rem;
-    }
-    
-    .input-wrapper input {
-        padding: 0.5rem;
-    }
-    
-    .priority-dropdown {
-        width: 100%;
-    }
-    
-    .color-picker-simple {
-        justify-content: center;
-        margin: 0.25rem 0;
-    }
-
-    .btn-add {
-        width: 100%;
-        padding: 0.75rem;
+    .logo-area h1 {
+        font-size: 1.2rem;
     }
 }

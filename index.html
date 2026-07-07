@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Tablero de Richi - Metas y Proyectos</title>
-    <meta name="description" content="Un tablero de control al estilo Jira pero casual y amigable, para organizar los sueños y metas de Richi.">
+    <title>El Diario del Richi - Mis Metas</title>
+    <meta name="description" content="Una bitácora súper simple para que Richi anote sus metas y las marque al cumplirlas.">
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,120 +23,52 @@
         <header class="main-header">
             <div class="logo-area">
                 <div class="icon-avatar">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="9" y1="3" x2="9" y2="21"></line>
-                        <line x1="15" y1="3" x2="15" y2="21"></line>
-                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                 </div>
                 <div>
-                    <h1>El Tablero de Richi</h1>
-                    <p class="subtitle">Organizador de Aventuras y Proyectos</p>
+                    <h1>El Diario del Richi</h1>
+                    <p class="subtitle">Mis Sueños y Metas de Vida</p>
                 </div>
             </div>
-            <!-- Simple Progress Stats -->
-            <div class="progress-simple">
-                <span id="progress-text">0 de 0 completados</span>
-                <div class="mini-bar">
-                    <div class="mini-bar-fill" id="progress-bar-fill" style="width: 0%"></div>
-                </div>
+            
+            <!-- Simple Counter -->
+            <div class="counter-badge" id="progress-counter">
+                0 de 0 logrados
             </div>
         </header>
 
-        <!-- QUICK ADD TICKET SECTION -->
-        <section class="add-goal-section">
-            <form id="quick-add-form" class="quick-add-form">
-                <div class="input-wrapper">
-                    <input type="text" id="goal-input" placeholder="Crear nuevo ticket (ej: Viajar al sur, arreglar la terraza...)" required autocomplete="off">
-                    
-                    <select id="goal-priority" class="priority-dropdown" title="Seleccionar Prioridad">
-                        <option value="alta">🔥 Urgente</option>
-                        <option value="media" selected>⭐ Pronto</option>
-                        <option value="baja">☕ Con Calma</option>
-                    </select>
-
-                    <div class="color-picker-simple">
-                        <label class="color-dot theme-purple" title="Púrpura">
-                            <input type="radio" name="goal-theme" value="theme-purple" checked>
-                            <span></span>
-                        </label>
-                        <label class="color-dot theme-blue" title="Azul">
-                            <input type="radio" name="goal-theme" value="theme-blue">
-                            <span></span>
-                        </label>
-                        <label class="color-dot theme-green" title="Verde">
-                            <input type="radio" name="goal-theme" value="theme-green">
-                            <span></span>
-                        </label>
-                        <label class="color-dot theme-rose" title="Rosa">
-                            <input type="radio" name="goal-theme" value="theme-rose">
-                            <span></span>
-                        </label>
-                        <label class="color-dot theme-amber" title="Ámbar">
-                            <input type="radio" name="goal-theme" value="theme-amber">
-                            <span></span>
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-add">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <!-- ADD GOAL INPUT -->
+        <section class="add-section">
+            <form id="add-form" class="add-form">
+                <input type="text" id="goal-input" placeholder="Escribe aquí un sueño o meta..." required autocomplete="off">
+                <button type="submit" class="btn btn-add">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
-                    Añadir Ticket
+                    Añadir
                 </button>
             </form>
         </section>
 
-        <!-- KANBAN BOARD -->
-        <main class="kanban-board">
-            <!-- COLUMN 1: IDEAS / POR HACER -->
-            <div class="kanban-column" id="col-todo">
-                <div class="column-header">
-                    <div class="column-title-wrapper">
-                        <span class="column-emoji">💡</span>
-                        <h2>Ideas y Deseos</h2>
-                    </div>
-                    <span class="column-badge" id="badge-todo">0</span>
-                </div>
-                <div class="cards-list" id="todo-list">
-                    <!-- Dynamic cards here -->
-                </div>
+        <!-- GOALS LIST -->
+        <main class="goals-list-container">
+            <div id="goals-list" class="goals-list">
+                <!-- List items will be injected here -->
             </div>
-
-            <!-- COLUMN 2: EN PROGRESO -->
-            <div class="kanban-column" id="col-progress">
-                <div class="column-header">
-                    <div class="column-title-wrapper">
-                        <span class="column-emoji">🏃‍♂️</span>
-                        <h2>En Progreso</h2>
-                    </div>
-                    <span class="column-badge" id="badge-progress">0</span>
-                </div>
-                <div class="cards-list" id="progress-list">
-                    <!-- Dynamic cards here -->
-                </div>
-            </div>
-
-            <!-- COLUMN 3: LOGRADO / HECHO -->
-            <div class="kanban-column" id="col-done">
-                <div class="column-header">
-                    <div class="column-title-wrapper">
-                        <span class="column-emoji">🎉</span>
-                        <h2>Logrado!</h2>
-                    </div>
-                    <span class="column-badge" id="badge-done">0</span>
-                </div>
-                <div class="cards-list" id="done-list">
-                    <!-- Dynamic cards here -->
-                </div>
+            
+            <!-- Empty state -->
+            <div class="empty-state" id="empty-state">
+                <span class="empty-emoji">✨</span>
+                <p>No tienes metas anotadas todavía. ¡Escribe una arriba!</p>
             </div>
         </main>
 
         <!-- FOOTER -->
         <footer class="main-footer">
-            <p>El Tablero de Richi • Estilo ágil para grandes proyectos de vida ❤️</p>
+            <p>Hecho con ❤️ para Richi • ¡Disfruta cada logro!</p>
         </footer>
     </div>
 
