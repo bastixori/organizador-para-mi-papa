@@ -1,51 +1,73 @@
 // ==========================================================================
-// CONFIGURATION & DUMMY DATA SEED
+// CONFIGURATION & DUMMY DATA SEED (JIRA CASUAL STYLE)
 // ==========================================================================
 
 const DEFAULT_GOALS = [
     {
-        id: "seed-1",
+        id: "goal-1",
+        key: "RICH-1",
         title: "Viajar a la Patagonia chilena en familia",
         theme: "theme-purple",
-        completed: false,
-        completedDate: null
+        priority: "alta",
+        status: "todo",
+        completedDate: null,
+        checklist: [
+            { id: "sub-1-1", text: "Buscar opciones de cabañas", done: false },
+            { id: "sub-1-2", text: "Revisar vuelos y transporte", done: false }
+        ]
     },
     {
-        id: "seed-2",
-        title: "Hacer un gran asado de campo para todos mis amigos",
+        id: "goal-2",
+        key: "RICH-2",
+        title: "Hacer un gran asado de campo para mis amigos",
         theme: "theme-amber",
-        completed: false,
-        completedDate: null
+        priority: "media",
+        status: "progress",
+        completedDate: null,
+        checklist: [
+            { id: "sub-2-1", text: "Elegir la fecha ideal", done: true },
+            { id: "sub-2-2", text: "Comprar leña de aromo", done: false },
+            { id: "sub-2-3", text: "Comprar la carne y acompañamientos", done: false }
+        ]
     },
     {
-        id: "seed-3",
-        title: "Visitar a mis primos en el sur y recorrer viejos lugares",
+        id: "goal-3",
+        key: "RICH-3",
+        title: "Visitar a mis primos en el sur y recordar viejos lugares",
         theme: "theme-blue",
-        completed: true,
-        completedDate: "2026-07-01"
+        priority: "alta",
+        status: "done",
+        completedDate: "2026-07-01",
+        checklist: []
     },
     {
-        id: "seed-4",
+        id: "goal-4",
+        key: "RICH-4",
         title: "Aprender a tocar en guitarra una canción de los Beatles",
         theme: "theme-green",
-        completed: false,
-        completedDate: null
+        priority: "baja",
+        status: "todo",
+        completedDate: null,
+        checklist: [
+            { id: "sub-4-1", text: "Aprender los acordes principales (C, G, Am, F)", done: true }
+        ]
     },
     {
-        id: "seed-5",
+        id: "goal-5",
+        key: "RICH-5",
         title: "Ir a ver un partido de la Selección en el estadio",
         theme: "theme-rose",
-        completed: false,
-        completedDate: null
+        priority: "media",
+        status: "progress",
+        completedDate: null,
+        checklist: []
     }
 ];
 
 // SVG Icons Constants
 const ICONS = {
     edit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`,
-    trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`,
-    check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
-    undo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>`
+    trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`
 };
 
 // ==========================================================================
@@ -57,7 +79,7 @@ let editingId = null; // Track which card is in inline edit mode
 
 // Initialize App
 function initApp() {
-    const savedGoals = localStorage.getItem("richi_kanban_goals");
+    const savedGoals = localStorage.getItem("richi_jira_goals");
     if (savedGoals) {
         goals = JSON.parse(savedGoals);
     } else {
@@ -71,7 +93,21 @@ function initApp() {
 }
 
 function saveGoals() {
-    localStorage.setItem("richi_kanban_goals", JSON.stringify(goals));
+    localStorage.setItem("richi_jira_goals", JSON.stringify(goals));
+}
+
+// Get next ticket key (RICH-X)
+function getNextTicketKey() {
+    let maxNum = 0;
+    goals.forEach(g => {
+        if (g.key && g.key.startsWith("RICH-")) {
+            const num = parseInt(g.key.split("-")[1]);
+            if (!isNaN(num) && num > maxNum) {
+                maxNum = num;
+            }
+        }
+    });
+    return `RICH-${maxNum + 1}`;
 }
 
 // ==========================================================================
@@ -87,21 +123,26 @@ function setupEventListeners() {
         const title = input.value.trim();
         if (!title) return;
         
+        const priority = document.getElementById("goal-priority").value;
         const selectedThemeEl = document.querySelector('input[name="goal-theme"]:checked');
         const theme = selectedThemeEl ? selectedThemeEl.value : "theme-purple";
         
         const newGoal = {
             id: "goal-" + Date.now(),
+            key: getNextTicketKey(),
             title: title,
             theme: theme,
-            completed: false,
-            completedDate: null
+            priority: priority,
+            status: "todo",
+            completedDate: null,
+            checklist: []
         };
         
-        goals.unshift(newGoal);
+        goals.push(newGoal); // Add to end (backlog style)
         saveGoals();
         
         input.value = "";
+        document.getElementById("goal-priority").value = "media";
         // Reset theme selector to first option
         document.querySelector('input[name="goal-theme"]').checked = true;
         
@@ -111,29 +152,30 @@ function setupEventListeners() {
 }
 
 // ==========================================================================
-// CARD OPERATIONS
+// TICKET WORKFLOW & STATUS OPERATIONS
 // ==========================================================================
 
-function toggleComplete(id, event) {
+function changeGoalStatus(id, newStatus, event) {
     const index = goals.findIndex(g => g.id === id);
     if (index === -1) return;
     
-    const isNowCompleted = !goals[index].completed;
-    goals[index].completed = isNowCompleted;
-    goals[index].completedDate = isNowCompleted ? new Date().toISOString().split('T')[0] : null;
+    const oldStatus = goals[index].status;
+    if (oldStatus === newStatus) return;
     
-    // Cancel editing if we toggle
-    if (editingId === id) {
-        editingId = null;
-    }
+    goals[index].status = newStatus;
+    goals[index].completedDate = newStatus === "done" ? new Date().toISOString().split('T')[0] : null;
+    goals[index].completed = newStatus === "done";
+    
+    // Close editing just in case
+    if (editingId === id) editingId = null;
     
     saveGoals();
     renderStats();
     renderBoard();
-
-    // Trigger confetti from the location of the action or screen corners
-    if (isNowCompleted) {
-        if (event) {
+    
+    // Trigger confetti if moved to "done" (Logrado)
+    if (newStatus === "done") {
+        if (event && event.target) {
             const rect = event.target.getBoundingClientRect();
             triggerConfetti(rect.left + rect.width / 2, rect.top + rect.height / 2);
         } else {
@@ -143,7 +185,7 @@ function toggleComplete(id, event) {
 }
 
 function deleteGoal(id) {
-    if (confirm("¿Estás seguro de que quieres eliminar esta meta de la lista?")) {
+    if (confirm("¿Estás seguro de que quieres eliminar este ticket de la lista?")) {
         goals = goals.filter(g => g.id !== id);
         if (editingId === id) editingId = null;
         saveGoals();
@@ -190,67 +232,128 @@ function saveInlineEdit(id) {
 }
 
 // ==========================================================================
-// RENDER BOARD FUNCTIONS
+// SUB-TASKS CHECKLIST OPERATIONS
+// ==========================================================================
+
+function toggleChecklistItem(goalId, itemId) {
+    const goalIndex = goals.findIndex(g => g.id === goalId);
+    if (goalIndex === -1) return;
+    
+    const itemIndex = goals[goalIndex].checklist.findIndex(item => item.id === itemId);
+    if (itemIndex === -1) return;
+    
+    goals[goalIndex].checklist[itemIndex].done = !goals[goalIndex].checklist[itemIndex].done;
+    saveGoals();
+    renderStats();
+    renderBoard();
+}
+
+function addSubtask(goalId, event) {
+    if (event) event.preventDefault();
+    
+    const input = document.getElementById(`subtask-input-${goalId}`);
+    if (!input) return;
+    
+    const text = input.value.trim();
+    if (!text) return;
+    
+    const goalIndex = goals.findIndex(g => g.id === goalId);
+    if (goalIndex === -1) return;
+    
+    const newItem = {
+        id: "sub-" + Date.now() + "-" + Math.floor(Math.random() * 1000),
+        text: text,
+        done: false
+    };
+    
+    if (!goals[goalIndex].checklist) {
+        goals[goalIndex].checklist = [];
+    }
+    
+    goals[goalIndex].checklist.push(newItem);
+    saveGoals();
+    
+    input.value = "";
+    renderBoard();
+}
+
+// ==========================================================================
+// RENDERING FUNCTIONS
 // ==========================================================================
 
 function renderStats() {
     const total = goals.length;
-    const completed = goals.filter(g => g.completed).length;
+    const completed = goals.filter(g => g.status === "done").length;
     const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
     
-    document.getElementById("progress-text").textContent = `${completed} de ${total} logrados 🌟`;
+    document.getElementById("progress-text").textContent = `${completed} de ${total} completados 🌟`;
     document.getElementById("progress-bar-fill").style.width = `${percentage}%`;
     
     // Update badge counters
-    document.getElementById("badge-todo").textContent = total - completed;
+    document.getElementById("badge-todo").textContent = goals.filter(g => g.status === "todo").length;
+    document.getElementById("badge-progress").textContent = goals.filter(g => g.status === "progress").length;
     document.getElementById("badge-done").textContent = completed;
 }
 
 function renderBoard() {
     const todoList = document.getElementById("todo-list");
+    const progressList = document.getElementById("progress-list");
     const doneList = document.getElementById("done-list");
     
-    // Clean list contents
     todoList.innerHTML = "";
+    progressList.innerHTML = "";
     doneList.innerHTML = "";
     
-    const todoGoals = goals.filter(g => !g.completed);
-    const doneGoals = goals.filter(g => g.completed);
+    const todoGoals = goals.filter(g => g.status === "todo");
+    const progressGoals = goals.filter(g => g.status === "progress");
+    const doneGoals = goals.filter(g => g.status === "done");
     
-    // Render Todo column
+    // Render Column 1 (Ideas / Todo)
     if (todoGoals.length === 0) {
         todoList.innerHTML = `
             <div class="column-empty">
-                <div class="column-empty-icon">📝</div>
-                <div class="column-empty-text">No hay metas por ahora.<br>¡Escribe una arriba!</div>
+                <div class="column-empty-icon">💡</div>
+                <div class="column-empty-text">No hay ideas pendientes.<br>¡Crea una arriba!</div>
             </div>
         `;
     } else {
         todoGoals.forEach(goal => {
-            const card = createCardElement(goal);
-            todoList.appendChild(card);
+            todoList.appendChild(createCardElement(goal));
         });
     }
     
-    // Render Done column
+    // Render Column 2 (En Progreso)
+    if (progressGoals.length === 0) {
+        progressList.innerHTML = `
+            <div class="column-empty">
+                <div class="column-empty-icon">🏃‍♂️</div>
+                <div class="column-empty-text">No hay metas activas.<br>Mueve alguna meta aquí para empezar.</div>
+            </div>
+        `;
+    } else {
+        progressGoals.forEach(goal => {
+            progressList.appendChild(createCardElement(goal));
+        });
+    }
+    
+    // Render Column 3 (Logrados)
     if (doneGoals.length === 0) {
         doneList.innerHTML = `
             <div class="column-empty">
-                <div class="column-empty-icon">✨</div>
-                <div class="column-empty-text">Aún no hay logros marcados.<br>¡A por ellos!</div>
+                <div class="column-empty-icon">🎉</div>
+                <div class="column-empty-text">Aún no hay logros celebrados.<br>¡Mueve una meta aquí al cumplirla!</div>
             </div>
         `;
     } else {
         doneGoals.forEach(goal => {
-            const card = createCardElement(goal);
-            doneList.appendChild(card);
+            doneList.appendChild(createCardElement(goal));
         });
     }
 }
 
 function createCardElement(goal) {
     const card = document.createElement("article");
-    card.className = `kanban-card ${goal.theme} ${goal.completed ? 'is-completed' : ''}`;
+    card.className = `kanban-card ${goal.theme} ${goal.status === 'done' ? 'is-completed' : ''}`;
     card.id = `card-${goal.id}`;
     
     const isEditing = editingId === goal.id;
@@ -258,31 +361,77 @@ function createCardElement(goal) {
     if (isEditing) {
         card.innerHTML = `
             <div class="inline-edit-form">
+                <label style="font-size:0.75rem; color:var(--text-secondary);">Editar título del ticket:</label>
                 <input type="text" class="inline-edit-input" id="inline-input-${goal.id}" value="${escapeHTML(goal.title)}" onkeydown="handleInlineKeyDown('${goal.id}', event)">
-                <button class="btn-inline-save" onclick="saveInlineEdit('${goal.id}')">Guardar</button>
-                <button class="btn-inline-cancel" onclick="cancelInlineEdit()">X</button>
+                <div class="inline-edit-actions">
+                    <button class="btn-inline-save" onclick="saveInlineEdit('${goal.id}')">Guardar</button>
+                    <button class="btn-inline-cancel" onclick="cancelInlineEdit()">Cancelar</button>
+                </div>
             </div>
         `;
     } else {
+        // Build checklist HTML
+        const checklist = goal.checklist || [];
+        const checkedCount = checklist.filter(item => item.done).length;
+        const totalCount = checklist.length;
+        
+        let checklistHTML = "";
+        if (totalCount > 0 || goal.status !== 'done') {
+            checklistHTML = `
+                <div class="card-checklist-container">
+                    <div class="checklist-title-wrapper">
+                        <span class="checklist-title">Sub-tareas</span>
+                        ${totalCount > 0 ? `<span class="checklist-progress-text">${checkedCount}/${totalCount}</span>` : ''}
+                    </div>
+                    <ul class="checklist-items-list">
+                        ${checklist.map(item => `
+                            <li class="checklist-item ${item.done ? 'is-done' : ''}">
+                                <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleChecklistItem('${goal.id}', '${item.id}')">
+                                <span>${escapeHTML(item.text)}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                    ${goal.status !== 'done' ? `
+                        <form class="add-subtask-form" onsubmit="addSubtask('${goal.id}', event)">
+                            <input type="text" class="add-subtask-input" id="subtask-input-${goal.id}" placeholder="Añadir sub-tarea..." autocomplete="off" required>
+                            <button type="submit" class="btn-subtask-add">+</button>
+                        </form>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Build main ticket body
         card.innerHTML = `
-            <div class="card-content-area">
-                <span class="card-text">${escapeHTML(goal.title)}</span>
+            <div class="card-ticket-header">
+                <span class="ticket-key">${goal.key}</span>
+                <span class="ticket-priority priority-${goal.priority}">
+                    ${goal.priority === 'alta' ? '🔥 Urgente' : goal.priority === 'media' ? '⭐ Pronto' : '☕ Con Calma'}
+                </span>
             </div>
+            
+            <span class="card-title-text">${escapeHTML(goal.title)}</span>
+            
+            ${checklistHTML}
+            
             <div class="card-actions">
                 <div class="card-actions-left">
-                    ${!goal.completed ? `
-                        <button class="btn-card-icon edit" onclick="startInlineEdit('${goal.id}')" title="Editar meta">
+                    ${goal.status !== 'done' ? `
+                        <button class="btn-card-icon edit" onclick="startInlineEdit('${goal.id}')" title="Editar título">
                             ${ICONS.edit}
                         </button>
                     ` : ''}
-                    <button class="btn-card-icon delete" onclick="deleteGoal('${goal.id}')" title="Eliminar de la lista">
+                    <button class="btn-card-icon delete" onclick="deleteGoal('${goal.id}')" title="Eliminar ticket">
                         ${ICONS.trash}
                     </button>
                 </div>
-                <button class="btn-toggle-status" onclick="toggleComplete('${goal.id}', event)" title="${goal.completed ? 'Desmarcar logro y devolver a Metas' : '¡Logrado! Marcar como completado'}">
-                    ${goal.completed ? ICONS.undo : ICONS.check}
-                    <span>${goal.completed ? 'Deshacer' : 'Logrado!'}</span>
-                </button>
+                
+                <!-- Status Workflow Selector -->
+                <select class="btn-status-dropdown" onchange="changeGoalStatus('${goal.id}', this.value, event)" title="Cambiar estado del ticket">
+                    <option value="todo" ${goal.status === 'todo' ? 'selected' : ''}>💡 Idea</option>
+                    <option value="progress" ${goal.status === 'progress' ? 'selected' : ''}>🏃‍♂️ Progreso</option>
+                    <option value="done" ${goal.status === 'done' ? 'selected' : ''}>🎉 Logrado</option>
+                </select>
             </div>
         `;
     }
@@ -311,7 +460,9 @@ window.startInlineEdit = startInlineEdit;
 window.cancelInlineEdit = cancelInlineEdit;
 window.saveInlineEdit = saveInlineEdit;
 window.deleteGoal = deleteGoal;
-window.toggleComplete = toggleComplete;
+window.changeGoalStatus = changeGoalStatus;
+window.toggleChecklistItem = toggleChecklistItem;
+window.addSubtask = addSubtask;
 window.handleInlineKeyDown = handleInlineKeyDown;
 
 // ==========================================================================
