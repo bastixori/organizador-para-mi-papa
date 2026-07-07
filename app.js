@@ -422,7 +422,7 @@ function createCardElement(dream) {
                     ${ICONS.trash}
                 </button>
             </div>
-            <button class="btn-complete" onclick="toggleComplete('${dream.id}', event)">
+            <button class="btn-complete" onclick="toggleComplete('${dream.id}', event)" title="${dream.completed ? 'Desmarcar y volver a poner en \'Por Vivir\'' : 'Marcar como cumplido'}">
                 ${ICONS.check}
                 <span>${dream.completed ? 'Cumplido' : 'Cumplir'}</span>
             </button>
