@@ -32,6 +32,7 @@ function initApp() {
     setupEventListeners();
     renderStats();
     renderBoard();
+    setupMusic();
 
     // Register PWA Service Worker
     if ('serviceWorker' in navigator) {
@@ -314,6 +315,54 @@ function loop() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         animationFrameId = null;
     }
+}
+
+// Background Music Control
+function setupMusic() {
+    const music = document.getElementById("bg-music");
+    const btn = document.getElementById("btn-music");
+    if (!music || !btn) return;
+    
+    music.volume = 0.12; // Pleasant background volume
+    
+    let isPlaying = false;
+    
+    function playMusic() {
+        music.play().then(() => {
+            isPlaying = true;
+            btn.textContent = "🔊";
+            btn.setAttribute("title", "Silenciar música");
+        }).catch(err => {
+            console.log("Autoplay bloqueado. Esperando interacción...");
+        });
+    }
+    
+    function pauseMusic() {
+        music.pause();
+        isPlaying = false;
+        btn.textContent = "🔇";
+        btn.setAttribute("title", "Activar música");
+    }
+    
+    btn.addEventListener("click", () => {
+        if (isPlaying) {
+            pauseMusic();
+        } else {
+            playMusic();
+        }
+    });
+    
+    // Auto-play workaround: play on first click/tap on screen
+    const startOnInteraction = () => {
+        if (!isPlaying) {
+            playMusic();
+        }
+        document.removeEventListener("click", startOnInteraction);
+        document.removeEventListener("touchstart", startOnInteraction);
+    };
+    
+    document.addEventListener("click", startOnInteraction);
+    document.addEventListener("touchstart", startOnInteraction);
 }
 
 // Start the app
