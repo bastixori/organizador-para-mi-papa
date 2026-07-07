@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Diario del Richi - Mis Metas</title>
-    <meta name="description" content="Una bitácora súper simple para que Richi anote sus metas y las marque al cumplirlas.">
+    <title>El Diario del Richi - Mis Metas y Logros</title>
+    <meta name="description" content="Una bitácora simple tipo Kanban para que Richi mueva sus metas de 'Por Vivir' a 'Logrado'.">
     <!-- Google Fonts: Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,12 +24,12 @@
             <div class="logo-area">
                 <div class="icon-avatar">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <polyline points="20 6 9 17 4 12"></polyline>
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                     </svg>
                 </div>
                 <div>
                     <h1>El Diario del Richi</h1>
-                    <p class="subtitle">Mis Sueños y Metas de Vida</p>
+                    <p class="subtitle">Mi Tablero de Metas y Logros</p>
                 </div>
             </div>
             
@@ -42,7 +42,7 @@
         <!-- ADD GOAL INPUT -->
         <section class="add-section">
             <form id="add-form" class="add-form">
-                <input type="text" id="goal-input" placeholder="Escribe aquí un sueño o meta..." required autocomplete="off">
+                <input type="text" id="goal-input" placeholder="Escribe aquí un nuevo sueño o meta..." required autocomplete="off">
                 <button type="submit" class="btn btn-add">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -53,22 +53,40 @@
             </form>
         </section>
 
-        <!-- GOALS LIST -->
-        <main class="goals-list-container">
-            <div id="goals-list" class="goals-list">
-                <!-- List items will be injected here -->
+        <!-- KANBAN BOARD -->
+        <main class="kanban-board">
+            <!-- COLUMN 1: TO DO (METAS) -->
+            <div class="kanban-column" id="col-todo">
+                <div class="column-header">
+                    <div class="column-title-wrapper">
+                        <span class="column-emoji">✈️</span>
+                        <h2>Por Vivir</h2>
+                    </div>
+                    <span class="column-badge" id="badge-todo">0</span>
+                </div>
+                <div class="cards-list" id="todo-list">
+                    <!-- Metas here -->
+                </div>
             </div>
-            
-            <!-- Empty state -->
-            <div class="empty-state" id="empty-state">
-                <span class="empty-emoji">✨</span>
-                <p>No tienes metas anotadas todavía. ¡Escribe una arriba!</p>
+
+            <!-- COLUMN 2: DONE (LOGROS) -->
+            <div class="kanban-column" id="col-done">
+                <div class="column-header">
+                    <div class="column-title-wrapper">
+                        <span class="column-emoji">🌟</span>
+                        <h2>Logrado!</h2>
+                    </div>
+                    <span class="column-badge" id="badge-done">0</span>
+                </div>
+                <div class="cards-list" id="done-list">
+                    <!-- Logros here -->
+                </div>
             </div>
         </main>
 
         <!-- FOOTER -->
         <footer class="main-footer">
-            <p>Hecho con ❤️ para Richi • ¡Disfruta cada logro!</p>
+            <p>Hecho con ❤️ para Richi • ¡Disfruta cada paso del camino!</p>
         </footer>
     </div>
 

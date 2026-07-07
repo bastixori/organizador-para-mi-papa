@@ -1,5 +1,5 @@
 // ==========================================================================
-// CONFIGURATION & SEED DATA (ULTRA-SIMPLE EMERALD LIST)
+// CONFIGURATION & SEED DATA (SIMPLE KANBAN EMERALD)
 // ==========================================================================
 
 const DEFAULT_GOALS = [
@@ -9,6 +9,7 @@ const DEFAULT_GOALS = [
 
 const SVG_ICONS = {
     check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`,
+    undo: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>`,
     trash: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>`
 };
 
@@ -20,7 +21,7 @@ let goals = [];
 
 // Initialize App
 function initApp() {
-    const savedGoals = localStorage.getItem("richi_simple_goals");
+    const savedGoals = localStorage.getItem("richi_simple_kanban_goals");
     if (savedGoals) {
         goals = JSON.parse(savedGoals);
     } else {
@@ -30,7 +31,7 @@ function initApp() {
     
     setupEventListeners();
     renderStats();
-    renderList();
+    renderBoard();
 
     // Register PWA Service Worker
     if ('serviceWorker' in navigator) {
@@ -43,7 +44,7 @@ function initApp() {
 }
 
 function saveGoals() {
-    localStorage.setItem("richi_simple_goals", JSON.stringify(goals));
+    localStorage.setItem("richi_simple_kanban_goals", JSON.stringify(goals));
 }
 
 // ==========================================================================
@@ -65,14 +66,13 @@ function setupEventListeners() {
             completed: false
         };
         
-        // Add to beginning of the list
         goals.unshift(newGoal);
         saveGoals();
         
         input.value = "";
         
         renderStats();
-        renderList();
+        renderBoard();
     });
 }
 
@@ -81,7 +81,6 @@ function setupEventListeners() {
 // ==========================================================================
 
 function toggleComplete(id, event) {
-    // Find the goal
     const index = goals.findIndex(g => g.id === id);
     if (index === -1) return;
     
@@ -90,7 +89,7 @@ function toggleComplete(id, event) {
     
     saveGoals();
     renderStats();
-    renderList();
+    renderBoard();
     
     // Trigger confetti if completed
     if (isNowCompleted) {
@@ -104,11 +103,11 @@ function toggleComplete(id, event) {
 }
 
 function deleteGoal(id) {
-    if (confirm("¿Estás seguro de querer borrar esta meta de tu diario?")) {
+    if (confirm("¿Estás seguro de querer borrar esta meta de tu tablero?")) {
         goals = goals.filter(g => g.id !== id);
         saveGoals();
         renderStats();
-        renderList();
+        renderBoard();
     }
 }
 
@@ -123,42 +122,67 @@ function renderStats() {
     document.getElementById("progress-counter").textContent = `${completed} de ${total} logrados`;
 }
 
-function renderList() {
-    const listElement = document.getElementById("goals-list");
-    const emptyState = document.getElementById("empty-state");
+function renderBoard() {
+    const todoList = document.getElementById("todo-list");
+    const doneList = document.getElementById("done-list");
     
-    listElement.innerHTML = "";
+    todoList.innerHTML = "";
+    doneList.innerHTML = "";
     
-    if (goals.length === 0) {
-        emptyState.style.display = "flex";
-        listElement.style.display = "none";
-        return;
+    const todoGoals = goals.filter(g => !g.completed);
+    const doneGoals = goals.filter(g => g.completed);
+    
+    // Update column badge counters
+    document.getElementById("badge-todo").textContent = todoGoals.length;
+    document.getElementById("badge-done").textContent = doneGoals.length;
+    
+    // Render Column 1 (Por Vivir)
+    if (todoGoals.length === 0) {
+        todoList.innerHTML = `
+            <div class="column-empty">
+                <div class="column-empty-icon">💡</div>
+                <div class="column-empty-text">No hay metas pendientes.<br>¡Añade una arriba!</div>
+            </div>
+        `;
+    } else {
+        todoGoals.forEach(goal => {
+            todoList.appendChild(createCardElement(goal));
+        });
     }
     
-    emptyState.style.display = "none";
-    listElement.style.display = "flex";
-    
-    // Sort goals: pending ones first, completed ones at the bottom
-    const sortedGoals = [...goals].sort((a, b) => a.completed - b.completed);
-    
-    sortedGoals.forEach(goal => {
-        const card = document.createElement("article");
-        card.className = `goal-card ${goal.completed ? 'is-completed' : ''}`;
-        
-        card.innerHTML = `
-            <div class="card-left-section" onclick="toggleComplete('${goal.id}', event)">
-                <button class="checkbox-btn" title="${goal.completed ? 'Marcar como pendiente' : 'Marcar como logrado'}">
-                    ${SVG_ICONS.check}
-                </button>
-                <span class="goal-text">${escapeHTML(goal.title)}</span>
+    // Render Column 2 (Logrado)
+    if (doneGoals.length === 0) {
+        doneList.innerHTML = `
+            <div class="column-empty">
+                <div class="column-empty-icon">✨</div>
+                <div class="column-empty-text">Aún no hay logros marcados.<br>¡Pulsa "Logrado!" al cumplirlos!</div>
             </div>
+        `;
+    } else {
+        doneGoals.forEach(goal => {
+            doneList.appendChild(createCardElement(goal));
+        });
+    }
+}
+
+function createCardElement(goal) {
+    const card = document.createElement("article");
+    card.className = `kanban-card ${goal.completed ? 'is-completed' : ''}`;
+    
+    card.innerHTML = `
+        <span class="card-text">${escapeHTML(goal.title)}</span>
+        <div class="card-actions">
             <button class="btn-delete" onclick="deleteGoal('${goal.id}')" title="Eliminar meta">
                 ${SVG_ICONS.trash}
             </button>
-        `;
-        
-        listElement.appendChild(card);
-    });
+            <button class="btn-move" onclick="toggleComplete('${goal.id}', event)" title="${goal.completed ? 'Mover a Por Vivir' : 'Mover a Logrado!'}">
+                ${goal.completed ? SVG_ICONS.undo : SVG_ICONS.check}
+                <span>${goal.completed ? 'Por Hacer' : 'Logrado!'}</span>
+            </button>
+        </div>
+    `;
+    
+    return card;
 }
 
 function escapeHTML(str) {
